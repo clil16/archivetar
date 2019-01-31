@@ -32,6 +32,10 @@ cat outdata.tar-part-* | tar -xvf -
 cat outdata.tar.bz2-part-* | tar -xvf - --use-compress-program=lbzip2
 ```
 
+# Compression
+
+archivetar automatically uses parallel versions of gzip [pigz](https://zlib.net/pigz/) or bzip2 [lbzip2](http://lbzip2.org/) if installed in PATH.  Or by setting PIGZ  or PBZIP.
+
 # TODO
 
 - Add check for GNU Tar
