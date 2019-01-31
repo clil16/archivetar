@@ -19,7 +19,7 @@ PIGZ="${PIGZ:-$(command -v pigz)}"
 PBZIP="${PBZIP:-$(command -v lbzip2)}"
 
 #path to PIGZ Binary
-SPLITSIZE="${SPLITSIZE:-"200"}"
+SPLITSIZE="${SPLITSIZE:-"200G"}"
 
 function usage {
       echo "Usage:"
@@ -29,7 +29,7 @@ function usage {
       echo "    -j               Compress with bzip2"
       echo "    -z               Compress with gzip"
       echo "    -b <snarname>    Create Backup using Incremental TAR"
-      echo "    -s               Split result tar into $SPLITSIZE GB Chunks"
+      echo "    -s               Split result tar into $SPLITSIZE Chunks"
       echo "    -v               Extra tar Messages"
       echo "    -d               Dry-Run with Debug"
       echo " "
@@ -39,7 +39,7 @@ function usage {
       echo "TAR                 tar executable to use Found: $TAR"
       echo "PIGZ                pigz executable to use Found: $PIGZ"
       echo "PBZIP               paralel bzip executable to use Found: $PBZIP"
-      echo "SPLITSIZE           if splitting what chunk size in GB Currently: $SPLITSIZE"
+      echo "SPLITSIZE           if splitting what chunk size Currently: $SPLITSIZE"
       echo " "
       echo "Return Codes:"
       echo "0                   worked as expected"
@@ -165,7 +165,7 @@ fi
 # are we splitting for an HSM or Cloud provider with max upload size?
 if [ $SPLIT ]
 then
-    FULLCMD="$TAR $TAROPTS --file - $TARGET | split -b ${SPLITSIZE}M - ${PREFIX}.part-"
+    FULLCMD="$TAR $TAROPTS --file - $TARGET | split -b ${SPLITSIZE} - ${PREFIX}.part-"
 else
     FULLCMD="$TAR $TAROPTS --file=${PREFIX} $TARGET"
 fi
