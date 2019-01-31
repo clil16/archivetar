@@ -14,7 +14,7 @@ The snar file tracks the changes made *including deletions* but is not required 
 
 ```
 # Initial copy of data (outdata.snar doesn't exist)
-archivetar -v -f outdata.0.tar -b outdata.snar  -s vis-human/
+archivetar -v -f outdata.0.tar -b outdata.snar  vis-human/
 ```
 
 # split
