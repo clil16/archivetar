@@ -5,8 +5,6 @@
 #
 # http://arc-ts.umich.edu/
 
-DATE=$(date '+%Y-%m-%d-%H')
-
 # Default TAR options
 TAROPTS=" --create --no-check-device "
 
@@ -24,12 +22,12 @@ function usage {
       echo "Usage:"
       echo "  archivetar [options] -f <prefix>  <directory>"
       echo "    -h               Display this help message"
-      echo "    -f <prefix>      Prefix of output tar Defaults to <directory>-YYYY-MM-DD-HH.tar"
+      echo "    -f <filename>    use archive file or device"
       echo "    -j               Compress with bzip2"
       echo "    -z               Compress with gzip"
-      echo "    -b               Create Backup using Incremental TAR"
+      echo "    -b <snarname>    Create Backup using Incremental TAR"
       echo "    -v               Extra tar Messages"
-      echo "    -d               Extra archivetar Messages"
+      echo "    -d               Dry-Run with Debug"
       echo " "
       echo " Do not delete the <prefix>.snar file"
       echo " "
@@ -44,7 +42,7 @@ function usage {
       echo "2                   files generated are not trustworthy"
 }
 
-while getopts ":hf:bvdzj" opt; do
+while getopts ":hf:b:vdzj" opt; do
   case ${opt} in
     f )
       PREFIX=$OPTARG
@@ -60,7 +58,7 @@ while getopts ":hf:bvdzj" opt; do
        BZIP="bzip"
       ;;
      b )
-       BACKUP="backup"
+       BACKUP=$OPTARG
       ;;
      v )
        VERBOSE="verbose"
@@ -123,7 +121,6 @@ then
    else
       TAROPTS="${TAROPTS} --gzip "
    fi
-   SUFFIX=".gz"
 fi
 
 if [ $BZIP ]
@@ -139,17 +136,15 @@ then
    else
       TAROPTS="${TAROPTS} --bzip2 "
    fi
-   SUFFIX=".bz2"
 fi
 
 if [ $BACKUP ]
 then
-    SNAR=${PREFIX}.snar
     
-    echo "  DO NOT delete $SNAR it is required to perform incrementals"
+    echo "  DO NOT delete $BACKUP it is required to perform incrementals"
     echo "  See: http://www.gnu.org/software/tar/manual/html_node/Incremental-Dumps.html"
 
-    TAROPTS="${TAROPTS} --listed-incremental=${SNAR} "
+    TAROPTS="${TAROPTS} --listed-incremental=$BACKUP "
 fi
 
 
@@ -159,7 +154,7 @@ then
     TAROPTS="${TAROPTS} --verbose --verbose "
 fi
 
-FULLCMD="$TAR $TAROPTS --file=${PREFIX}.tar${SUFFIX} $TARGET"
+FULLCMD="$TAR $TAROPTS --file=${PREFIX} $TARGET"
 
 if [ $DEBUG ]
 then
@@ -169,7 +164,10 @@ fi
 
 
 ######  Actaully run the big tar
-$FULLCMD
+if [ ! $DEBUG ]
+then
+    $FULLCMD
+fi
 
 if [ $? -ne 0 ]
 then
