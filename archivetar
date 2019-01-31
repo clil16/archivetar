@@ -15,7 +15,7 @@ TAROPTS=" --create --no-check-device "
 TAR="${TAR:-$(command -v tar)}"
 
 #path to PIGZ Binary
-PIGZ="${PIGZ:-$(command -v igz)}"
+PIGZ="${PIGZ:-$(command -v pigz)}"
 
 #path to PIGZ Binary
 PBZIP="${PBZIP:-$(command -v lbzip2)}"
@@ -169,7 +169,7 @@ fi
 
 
 ######  Actaully run the big tar
-#$FULLCMD
+$FULLCMD
 
 if [ $? -ne 0 ]
 then
