@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# Brock Palen
+# brockp@umich.edu
+#
+# The intent of this is to generate a report for data to be uploaded to Data Den
+# https://arc-ts.umich.edu/data-den/
+# Data Den only accepts files > 100MB, it enforces this by providing only 10,000 files/TB of prvisoned capacity
+#
+# Often data in a single folder looks like:
+# Files >100MB   100 Files  100GB
+# Files <100MB 10000 Files  2GB
+#
+# You could combine Locker
+# https://arc-ts.umich.edu/locker/
+# Which frontends Data Den as a cache to hold smaller files
+
+## TODO
+#
+# * Generate optional list of files
+# * parallelize scan
+
+# cost of data den/TB/yr
+DATADENRATE="${DATADENRATE:-"40"}"
+
+# data den Migrate size MB
+DATADENMIGRATE="${DATADENMIGRATE:-"100"}"
+
+# cost of Locker/TB/yr
+LOCKERRATE="${LOCKERRATE:-"80"}"
+
+# Locker file quota/MB
+LOCKEERINODE=1
+
+
+# Sum files > DATADENMIGRATE
+MSIZE=$(find . -type f -size +${DATADENMIGRATE}M -printf %s\\n | paste -sd+ | bc) 
+# count files > DATADENMIGRATE
+MCNT=$(find . -type f -size +${DATADENMIGRATE}M | wc -l) 
+
+# Sum files < DATADENMIGRATE
+LSIZE=$(find . -type f -size -${DATADENMIGRATE}M -printf %s\\n | paste -sd+ | bc)  
+# count files < DATADENMIGRATE
+LCNT=$(find . -type f -size -${DATADENMIGRATE}M | wc -l)   
+
+wait
+
+echo ""
+echo "------- Results -------"
+echo "Data Den Canidates: "
+echo "Count: $MCNT"
+echo "Size: $(numfmt --to=si $MSIZE)"
+echo ""
+echo "Cache (Locker) only files: "
+echo "Count: $LCNT"
+echo "Size: $(numfmt --to=si $LSIZE)"
+
