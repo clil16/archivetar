@@ -19,7 +19,6 @@
 ## TODO
 #
 # * Generate optional list of files
-# * switch scan to one pass
 # * Make seetings setable from envrionment
 
 import os
@@ -111,6 +110,6 @@ print""
 print("Cache (Locker) Candidates:")
 print("Files: %s" % (ccnt))
 print("Size: %s" % (sizeof_fmt(csize)))
-print("Terabyte %s Cost: $%d" % (tbyte, tbyte*lockerrate))
+print("Terabyte %s (Storage: %s, Tape Cache: %s) Cost: $%d" % (tbyte+extra_cache, tbyte, extra_cache, tbyte*lockerrate))
 print""
 print("Scan Time %s Seconds" % (time.time() - start_time))
