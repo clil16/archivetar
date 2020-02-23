@@ -92,7 +92,7 @@ dir_path = os.getcwd()
 start_time = time.time()
 
 
-print "----- Results ------"
+print("----- Results ------")
 print("Data Den Candidates:")
 
 size, count, csize, ccnt = get_size()
@@ -106,10 +106,10 @@ print("Terabyte %s Cost: $%d" % (tbyte, tbyte*datadenrate))
 tbyte = math.ceil(csize/byteintbyte) 
 filestb = math.ceil((count+ccnt)/lockerinode)
 tbyte = max(tbyte, filestb)
-print""
+print("")
 print("Cache (Locker) Candidates:")
 print("Files: %s" % (ccnt))
 print("Size: %s" % (sizeof_fmt(csize)))
 print("Terabyte %s (Storage: %s, Tape Cache: %s) Cost: $%d" % (tbyte+extra_cache, tbyte, extra_cache, tbyte*lockerrate))
-print""
+print("")
 print("Scan Time %s Seconds" % (time.time() - start_time))
