@@ -24,6 +24,7 @@
 import os
 import time
 import math
+from multiprocessing import Pool
 
 # This is to get the directory that the program  
 # is currently running in. 
@@ -51,20 +52,37 @@ def get_size(start_path = '.', filter_size = 104857600):
     total_cnt = 0   # counts for archive
     ctotal_size = 0 # size for cache (to small for archive)
     ctotal_cnt = 0  # counts for cache (to small for archive)
-    for dirpath, dirnames, filenames in os.walk(start_path):
-        for f in filenames:
-            fp = os.path.join(dirpath, f)
-            # skip if it is symbolic link
-            if not os.path.islink(fp):
-                size = os.path.getsize(fp)
-                if size > filter_size:
-                    total_size += size
-                    total_cnt += 1
-                if size <= filter_size:
-                    ctotal_size += size
-                    ctotal_cnt += 1
+    p = Pool(processes=8)
+    #for dirpath, dirnames, filenames in os.walk(start_path):
+    output = p.map(get_size_local, [(dirpath, filenames, filter_size) for dirpath, dirnames, filenames in os.walk(start_path)])
+    for (a, b, c, d) in output:
+       total_size += a
+       total_cnt += b
+       ctotal_size += c
+       ctotal_cnt += d
 
     return total_size, total_cnt, ctotal_size, ctotal_cnt
+
+def get_size_local(args):
+    dirpath, filenames, filter_size = args
+    total_size = 0  # total size to archive
+    total_cnt = 0   # counts for archive
+    ctotal_size = 0 # size for cache (to small for archive)
+    ctotal_cnt = 0  # counts for cache (to small for archive)
+    for f in filenames:
+        fp = os.path.join(dirpath, f)
+        # skip if it is symbolic link
+        if not os.path.islink(fp):
+            size = os.path.getsize(fp)
+            if size > filter_size:
+                total_size += size
+                total_cnt += 1
+            if size <= filter_size:
+                ctotal_size += size
+                ctotal_cnt += 1
+
+    return total_size, total_cnt, ctotal_size, ctotal_cnt
+
 
 # borrowed from
 # https://stackoverflow.com/questions/1094841/reusable-library-to-get-human-readable-version-of-file-size
